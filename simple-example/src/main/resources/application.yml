@@ -1,0 +1,14 @@
+server:
+  port: 8080
+  max-http-header-size: 100KB # 设置请求头大小,使用jwt请求头可能会很大
+spring:
+  application:
+    name: simple-example-service
+jetlinks:
+  token:
+    jwt:
+      # jwt 公钥
+      key:
+logging:
+  level:
+    com.alibaba: warn

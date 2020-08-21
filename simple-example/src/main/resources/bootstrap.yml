@@ -1,0 +1,29 @@
+nacos:
+  server-addr: 127.0.0.1:8848
+  username: ""
+  password: ""
+  public-ip: ""
+  public-port: -1
+  namespace: ""
+  zone: ""
+spring:
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: ${nacos.server-addr}
+        watch-delay: 2000
+        username: ${nacos.username}
+        password: ${nacos.password}
+        port: ${nacos.public-port}
+        ip: ${nacos.public-ip}
+        metadata:
+          zone: ${nacos.zone}
+        namespace: ${nacos.namespace}
+      config:
+        enabled: true
+        server-addr: ${nacos.server-addr}
+        username: ${nacos.username}
+        password: ${nacos.password}
+        namespace: ${nacos.namespace}
+        file-extension: yml

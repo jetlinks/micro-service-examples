@@ -1,0 +1,15 @@
+server:
+  port: 12121
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: dispatch
+          uri: error://localhost
+          predicates:
+            - Path=/**
+          filters:
+            - ProxyFilterFactory
+logging:
+  level:
+    org.jetlinks: debug

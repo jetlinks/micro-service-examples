@@ -1,0 +1,16 @@
+## 1. 模拟登录获取用户token
+
+POST http://localhost:8800/authorize/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+> {% client.global.set("auth_token", response.body.result.token); %}
+
+### 2. 使用token通过网关访问 TestAuthController
+
+GET http://localhost:8800/simple-example-service/auth-info
+X-Access-Token: {{auth_token}}
