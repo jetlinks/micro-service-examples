@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -86,7 +87,7 @@ public class ProxyFilterFactory extends AbstractGatewayFilterFactory<ProxyFilter
                         .flatMap(res -> exchange
                                 .getResponse()
                                 .writeWith(Mono.just(bufferFactory.wrap((createProxyInfo(res.address(), address).getBytes(StandardCharsets.UTF_8))))))
-                                .then();
+                        .then();
             }
 
             String domain = String.join(".", Arrays.copyOfRange(domainAndPort, 0, domainAndPort.length - 1));
@@ -111,7 +112,7 @@ public class ProxyFilterFactory extends AbstractGatewayFilterFactory<ProxyFilter
         private String createProxyInfo(InetSocketAddress server, InetSocketAddress proxy) {
             StringBuilder html = new StringBuilder("<html><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">");
             html.append("<h2 align=center>");
-            html.append("关闭界面后10分钟将停止代理");
+            html.append("关闭界面").append(durationToString(this.proxy.getExpires())).append("后将停止代理");
             html.append("<br>");
             html.append("公网: ").append(server.getHostName()).append(":").append(server.getPort());
             html.append(" => 内网: ").append(proxy.getHostName()).append(":").append(proxy.getPort());
@@ -119,6 +120,15 @@ public class ProxyFilterFactory extends AbstractGatewayFilterFactory<ProxyFilter
             html.append("</h2>");
             html.append("<script type='application/javascript'>window.setInterval(function(){window.location.reload()},10000)</script>");
             return html.append("</html>").toString();
+        }
+
+        public String durationToString(Duration duration) {
+            return duration
+                    .toString()
+                    .replace("PT", "")
+                    .replace("H", "小时")
+                    .replace("M", "分钟")
+                    .replace("S", "秒");
         }
 
         @Override
