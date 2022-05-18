@@ -24,7 +24,7 @@ public class ProxyManager {
 
     private final Map<InetSocketAddress, Cache> proxies = new ConcurrentHashMap<>();
 
-    private Duration expires = Duration.ofHours(1);
+    private Duration expires = Duration.ofMinutes(10);
 
     public ProxyManager() {
 

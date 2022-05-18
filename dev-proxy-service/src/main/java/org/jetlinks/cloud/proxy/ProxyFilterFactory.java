@@ -75,33 +75,18 @@ public class ProxyFilterFactory extends AbstractGatewayFilterFactory<ProxyFilter
             String[] hosts = host.split("[.]");
             String[] domainAndPort = hosts[0].split("[-]");
 
-            if (domainAndPort[0].equals("tcp")||domainAndPort[0].equals("udp")) {
+            if (domainAndPort[0].equals("tcp") || domainAndPort[0].equals("udp")) {
                 String domain = String.join(".", Arrays.copyOfRange(domainAndPort, 1, domainAndPort.length - 1));
                 int port = Integer.parseInt(domainAndPort[domainAndPort.length - 1]);
                 exchange.getResponse().getHeaders().setContentType(MediaType.TEXT_HTML);
+                InetSocketAddress address = new InetSocketAddress(domain, port);
+
                 return proxy
-                        .startProxy(new InetSocketAddress(domain, port))
+                        .startProxy(address)
                         .flatMap(res -> exchange
                                 .getResponse()
-                                .writeWith(
-                                        Mono.just(
-                                                bufferFactory.wrap(
-                                                        ("<html><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">" +
-                                                                "" +
-                                                                "<h1 align=center>关闭界面后1小时将停止代理<br>tcp:/" + res
-                                                                .address()
-                                                                .toString()+""
-                                                        +"<br><br>udp:/" + res
-                                                                .address()
-                                                                .toString()
-                                                                +"</h1>\n<script type='application/javascript'>window.setInterval(function(){window.location.reload()},10000)</script>" +
-                                                                "</html>"
-                                                        ).getBytes(StandardCharsets.UTF_8)
-                                                )
-                                        )
-                                )
-                        )
-                        .then();
+                                .writeWith(Mono.just(bufferFactory.wrap((createProxyInfo(res.address(), address).getBytes(StandardCharsets.UTF_8))))))
+                                .then();
             }
 
             String domain = String.join(".", Arrays.copyOfRange(domainAndPort, 0, domainAndPort.length - 1));
@@ -121,6 +106,19 @@ public class ProxyFilterFactory extends AbstractGatewayFilterFactory<ProxyFilter
 
 
             return chain.filter(exchange);
+        }
+
+        private String createProxyInfo(InetSocketAddress server, InetSocketAddress proxy) {
+            StringBuilder html = new StringBuilder("<html><meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">");
+            html.append("<h2 align=center>");
+            html.append("关闭界面后10分钟将停止代理");
+            html.append("<br>");
+            html.append("公网: ").append(server.getHostName()).append(":").append(server.getPort());
+            html.append(" => 内网: ").append(proxy.getHostName()).append(":").append(proxy.getPort());
+            html.append("<br>");
+            html.append("</h2>");
+            html.append("<script type='application/javascript'>window.setInterval(function(){window.location.reload()},10000)</script>");
+            return html.append("</html>").toString();
         }
 
         @Override
