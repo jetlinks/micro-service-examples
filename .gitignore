@@ -30,3 +30,4 @@ docker/data
 !demo-protocol-1.0.jar
 ./dev/**
 /dist/data/
+application-local.yml

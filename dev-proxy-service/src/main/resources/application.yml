@@ -1,6 +1,8 @@
 server:
   port: 12121
 spring:
+  profiles:
+    active: local
   cloud:
     gateway:
       routes:
@@ -13,3 +15,10 @@ spring:
 logging:
   level:
     org.jetlinks: debug
+proxy:
+  frp:
+    cmd: /home/user/frpc
+    server-address: "127.0.0.1"
+    server-port: 7000
+    token: token
+    server-ports: 7001-7010

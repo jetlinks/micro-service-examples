@@ -1,6 +1,7 @@
 package org.jetlinks.cloud.proxy;
 
 
+import org.jetlinks.cloud.proxy.tcp.ProxyManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.embedded.netty.NettyReactiveWebServerFactory;
@@ -31,8 +32,8 @@ public class ProxyApplication {
         }
 
         @Bean
-        public ProxyFilterFactory proxyFilterFactory() {
-            return new ProxyFilterFactory();
+        public ProxyFilterFactory proxyFilterFactory(ProxyManager proxy) {
+            return new ProxyFilterFactory(proxy);
         }
 
     }

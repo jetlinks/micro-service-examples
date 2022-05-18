@@ -8,7 +8,8 @@ jetlinks:
   token:
     jwt:
       # jwt 公钥
-      key:
+      key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIgLDKvGlDEedlBYEBdXUXZ3cq3hBCqYzqK9bsRV2n4htVQQZKM7vuKksxh3oGtGCEK8jYzcKe+xZrh7Dw5w5/ECAwEAAQ==
+      issuer: api.gateway
 logging:
   level:
     com.alibaba: warn

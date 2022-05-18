@@ -1,10 +1,10 @@
 nacos:
-  server-addr: 127.0.0.1:8848
-  username: ""
-  password: ""
-  public-ip: ""
-  public-port: -1
-  namespace: ""
+  server-addr: nacos.cuiot.jetlinks.cn:80
+  username: "jetlinks-dev"
+  password: "p@ssw0rd"
+  public-ip: "192-168-3-183-${server.port}.proxy.jetlinks.cn"
+  public-port: 7010
+  namespace: "dev"
   zone: ""
 spring:
   cloud:
@@ -21,7 +21,7 @@ spring:
           zone: ${nacos.zone}
         namespace: ${nacos.namespace}
       config:
-        enabled: true
+        enabled: false
         server-addr: ${nacos.server-addr}
         username: ${nacos.username}
         password: ${nacos.password}
