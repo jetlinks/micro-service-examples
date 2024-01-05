@@ -93,7 +93,7 @@ public class ProxyFilterFactory extends AbstractGatewayFilterFactory<ProxyFilter
             String domain = String.join(".", Arrays.copyOfRange(domainAndPort, 0, domainAndPort.length - 1));
 
             String url = "http://" + domain + ":" + domainAndPort[domainAndPort.length - 1];
-            log.debug("proxy {} to {}", exchange.getRequest().getURI(), url);
+            log.debug("proxy {} {} to {}", exchange.getRequest().getMethodValue(), exchange.getRequest().getURI(), url);
             Route newRoute = Route
                     .async()
                     .id(route.getId())
@@ -104,7 +104,19 @@ public class ProxyFilterFactory extends AbstractGatewayFilterFactory<ProxyFilter
                     .build();
 
             exchange.getAttributes().put(GATEWAY_ROUTE_ATTR, newRoute);
-
+            //无法识别的请求头,并且没有指定contentLength
+            if (null == exchange.getRequest().getMethod()&&
+                    exchange.getRequest().getHeaders().getContentLength()==-1) {
+                return chain.filter(
+                        exchange
+                                .mutate()
+                                .request(exchange
+                                                 .getRequest()
+                                                 .mutate()
+                                                 .headers(headers -> headers.setContentLength(0))
+                                                 .build())
+                                .build());
+            }
 
             return chain.filter(exchange);
         }
