@@ -144,7 +144,7 @@ public class Frp {
 
             disposable.add(
                     Schedulers
-                            .elastic()
+                            .boundedElastic()
                             .schedule(() -> {
                                 while (!disposable.isDisposed()) {
                                     try {
@@ -161,7 +161,7 @@ public class Frp {
 
             disposable.add(
                     Schedulers
-                            .elastic()
+                            .boundedElastic()
                             .schedule(() -> {
                                 while (!disposable.isDisposed()) {
                                     try {
