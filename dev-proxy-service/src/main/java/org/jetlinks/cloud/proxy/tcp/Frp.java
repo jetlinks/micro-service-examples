@@ -58,6 +58,7 @@ public class Frp {
                 set.add(Integer.parseInt(port));
             }
         }
+        set.remove(serverPort);
         remotePortPool.addAll(set);
     }
 
