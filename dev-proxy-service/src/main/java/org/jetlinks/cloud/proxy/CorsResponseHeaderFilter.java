@@ -10,10 +10,10 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CorsResponseHeaderFilter implements GlobalFilter, Ordered {
-    static final String[] duplicateKeys = {
+    static final String[] ACCESS_CONTROL_KEYS = {
+            HttpHeaders.VARY,
             HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN,
             HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS,
             HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
@@ -25,31 +25,30 @@ public class CorsResponseHeaderFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
-        return chain.filter(exchange)
-                .then(Mono.fromRunnable(()->  removeDuplicateHeader(exchange)));
+        exchange
+                .getResponse()
+                .beforeCommit(
+                        () -> {
+                            removeDuplicateHeader(exchange);
+                            return Mono.empty();
+                        }
+                );
+        return chain.filter(exchange);
     }
 
     private void removeDuplicateHeader(ServerWebExchange exchange) {
 
         HttpHeaders headers = exchange.getResponse().getHeaders();
-        if(headers.getClass().getName().contains("ReadOnlyHttpHeaders")){
-            return;
-        }
 
-        List<String> vary =  headers.getVary().stream().distinct().collect(Collectors.toList());
-
-        headers.remove(HttpHeaders.VARY);
-        headers.addAll(HttpHeaders.VARY,vary);
-
-        for (String duplicateKey : duplicateKeys) {
+        for (String duplicateKey : ACCESS_CONTROL_KEYS) {
             List<String> keys = headers.get(duplicateKey);
             if (CollectionUtils.isEmpty(keys) || keys.size() == 1) {
                 continue;
             }
             Set<String> distinct = new HashSet<>(keys);
-            if(distinct.contains("*")){
-                headers.set(duplicateKey,"*");
-            }else {
+            if (distinct.contains("*")) {
+                headers.set(duplicateKey, "*");
+            } else if (distinct.size() != keys.size()) {
                 headers.remove(duplicateKey);
                 headers.addAll(duplicateKey, new ArrayList<>(distinct));
             }
