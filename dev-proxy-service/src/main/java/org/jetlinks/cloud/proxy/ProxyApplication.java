@@ -36,5 +36,10 @@ public class ProxyApplication {
             return new ProxyFilterFactory(proxy);
         }
 
+        @Bean
+        public CorsResponseHeaderFilter corsResponseHeaderFilter(){
+            return new CorsResponseHeaderFilter();
+        }
+
     }
 }

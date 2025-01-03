@@ -5,6 +5,21 @@ spring:
     active: local
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+            '[/**]':
+                allowedOrigins: "*"
+                allowedMethods:
+                - GET
+                - POST
+                - PUT
+                - DELETE
+                - PATCH
+                - OPTIONS
+                - HEAD
+                allowedHeaders:
+                - "*"
+                #allowCredentials: true
       routes:
         - id: dispatch
           uri: error://localhost
@@ -21,4 +36,4 @@ proxy:
     server-address: "127.0.0.1"
     server-port: 7000
     token: token
-    server-ports: 7001-7010
+    server-ports: "7001-7010"

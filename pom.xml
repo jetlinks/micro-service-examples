@@ -18,9 +18,9 @@
         <project.build.locales>zh_CN</project.build.locales>
         <java.version>1.8</java.version>
         <project.build.jdk>${java.version}</project.build.jdk>
-        <hsweb.framework.version>4.0.17-SNAPSHOT</hsweb.framework.version>
+        <hsweb.framework.version>4.0.18-SNAPSHOT</hsweb.framework.version>
         <spring.cloud.version>2021.0.3</spring.cloud.version>
-        <jetlinks.pro.version>2.2.0-SNAPSHOT</jetlinks.pro.version>
+        <jetlinks.pro.version>2.3.0-SNAPSHOT</jetlinks.pro.version>
         <spring.boot.version>2.7.18</spring.boot.version>
         <docker.image.name>registry.cn-shenzhen.aliyuncs.com/jetlinks-cloud/${project.artifactId}</docker.image.name>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>

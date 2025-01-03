@@ -63,10 +63,7 @@ public class ProxyFilterFactory extends AbstractGatewayFilterFactory<ProxyFilter
         public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
             String host = Optional
                     .ofNullable(exchange.getRequest().getHeaders().getFirst("X-Service-Host"))
-                    .orElse(exchange.getRequest().getHeaders().getFirst(HttpHeaders.HOST));
-            if (StringUtils.isEmpty(host)) {
-                return Mono.error(new UnsupportedOperationException("no host header"));
-            }
+                    .orElse(exchange.getRequest().getURI().getHost());
 
             Route route = exchange.getAttribute(GATEWAY_ROUTE_ATTR);
             if (route == null) {
@@ -117,7 +114,9 @@ public class ProxyFilterFactory extends AbstractGatewayFilterFactory<ProxyFilter
                                                  .build())
                                 .build());
             }
-
+            exchange.getResponse()
+                    .getHeaders()
+                    .add("Proxy-Url",url);
             return chain.filter(exchange);
         }
 
